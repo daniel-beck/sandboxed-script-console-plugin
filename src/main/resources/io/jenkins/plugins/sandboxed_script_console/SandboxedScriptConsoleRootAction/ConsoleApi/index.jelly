@@ -1,0 +1,27 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+    <l:layout title="Remote API" type="one-column">
+        <l:main-panel>
+            <h1>REST API</h1>
+            <h2>Programmatic Use</h2>
+            <p>
+                You can send <tt>POST</tt> requests to <a href="..">this URL</a> using tools such as <tt>curl</tt>.
+                To provide a script for execution, do any of the following:
+            </p>
+            <ul>
+                <li>
+                    Provide a <tt>Content-Type: application/x-www-form-urlencoded</tt> request header (the default in <tt>curl</tt> with <tt>--data-binary</tt>) and put the script inside the <tt>script</tt> parameter.
+                </li>
+                <li>
+                    Provide a <tt>Content-Type: text/plain</tt> request header. Then, the entire request body will be considered the script.
+                </li>
+                <li>
+                    Provide a <tt>script</tt> query parameter. This only works well for very short scripts.
+                </li>
+            </ul>
+            <p>
+                Depending on the <tt>Accept</tt> request header's value, the result will be <tt>text/plain</tt> (preferred) or <tt>text/html</tt>.
+            </p>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

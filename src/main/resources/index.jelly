@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+    A general purpose <a href="https://plugins.jenkins.io/script-security/">Script Security</a>-protected script console for normal users.
+</div>
