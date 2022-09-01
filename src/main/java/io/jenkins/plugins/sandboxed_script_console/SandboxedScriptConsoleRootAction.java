@@ -2,13 +2,17 @@ package io.jenkins.plugins.sandboxed_script_console;
 
 import groovy.lang.Binding;
 import hudson.Extension;
+import hudson.Functions;
 import hudson.model.AbstractModelObject;
 import hudson.model.RootAction;
 import hudson.model.TaskListener;
 import hudson.security.Permission;
 import hudson.security.PermissionGroup;
 import hudson.security.PermissionScope;
+import hudson.util.StreamTaskListener;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
@@ -56,13 +60,17 @@ public class SandboxedScriptConsoleRootAction implements RootAction, StaplerProx
         }
         // TODO Figure out how to make this work with pure GroovyShell + GroovySandbox + ClassLoaderWhitelist
         SecureGroovyScript secureGroovyScript = new SecureGroovyScript(script, true, Collections.emptyList()).configuringWithNonKeyItem();
-        Object returnValue;
+        StringWriter out = new StringWriter();
+        PrintWriter pw = new PrintWriter(out);
         try {
-            returnValue = secureGroovyScript.evaluate(getClass().getClassLoader(), new Binding(), TaskListener.NULL); // TODO actual task listener?
+            Binding binding = new Binding();
+            binding.setVariable("out", pw);
+            Object returnValue = secureGroovyScript.evaluate(getClass().getClassLoader(), binding, new StreamTaskListener(pw));
+            pw.println("Result: " + returnValue);
         } catch (Exception ex) {
-            returnValue = ex.getMessage();
+            Functions.printStackTrace(ex, pw);
         }
-        req.setAttribute("output", returnValue);
+        req.setAttribute("output", out.toString());
 
         final RequestDispatcher view = req.getView(this, shouldReturnTextPlainResponse(req) ? "_text.jelly" : "index.jelly");
         view.forward(req, rsp);
