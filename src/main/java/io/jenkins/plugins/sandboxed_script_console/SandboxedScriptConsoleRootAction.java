@@ -68,7 +68,11 @@ public class SandboxedScriptConsoleRootAction implements RootAction, StaplerProx
             Object returnValue = secureGroovyScript.evaluate(getClass().getClassLoader(), binding, new StreamTaskListener(pw));
             pw.println("Result: " + returnValue);
         } catch (Exception ex) {
-            Functions.printStackTrace(ex, pw);
+            if (Jenkins.get().hasPermission(Jenkins.ADMINISTER)) {
+                Functions.printStackTrace(ex, pw);
+            } else {
+                pw.println(ex.toString());
+            }
         }
         req.setAttribute("output", out.toString());
 
